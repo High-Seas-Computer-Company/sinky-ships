@@ -13,11 +13,15 @@ A npm library that allows a user to play a game of battleship against a computer
 
 ## Team Agreement
 
-- Project Prep 1 team agreement [here](team-agreement.md)
+- Project Prep 1: team agreement [here](team-agreement.md)
+
+## Software Requirements
+
+- Project Prep 4: software requirements [here](requirements.md)
 
 ## Project Management Tools
 
-- Trello board [here](https://trello.com/b/pSVFu30Q/sinky-ship)
+- Trello board with user stories [here](https://trello.com/b/pSVFu30Q/sinky-ship)
 
 ## DOM
 
