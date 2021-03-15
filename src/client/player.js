@@ -3,7 +3,7 @@
 const socketio = require('socket.io-client');
 const game = require('../client/player.js');
 // when we deploy to Heroku - will need to change this
-const sinkyShipUrl = 'http://localhost:3000/sinky-ship';
+const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
 
 const sinkyShipServer = socketio.connect(sinkyShipUrl);
 
