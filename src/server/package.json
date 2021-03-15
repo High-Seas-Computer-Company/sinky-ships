@@ -4,7 +4,6 @@
   "description": "",
   "main": "game.js",
   "scripts": {
-    "start": "node hub.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
