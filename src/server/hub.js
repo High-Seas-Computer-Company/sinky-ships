@@ -1,8 +1,8 @@
 'use strict';
 
 const socketio = require('socket.io');
-
-const io = socketio(3000);
+require('dotenv').config();
+const io = socketio(process.env.PORT);
 
 const sinkyShip = io.of('/sinky-ship');
 
