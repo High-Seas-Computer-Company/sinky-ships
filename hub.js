@@ -4,6 +4,8 @@ const socketio = require('socket.io');
 require('dotenv').config();
 const io = socketio(process.env.PORT);
 
+const game = require('./server/game.js');
+
 const sinkyShip = io.of('/sinky-ship');
 
 io.on('connection', socket => {
@@ -30,13 +32,23 @@ sinkyShip.on('connection', (socket) => {
   socket.on('response', (payload) => {
     console.log('RESPONSE', payload);
     // insert logic here
-    
+
     // TODO: emit hit/miss info and computer move
     // TODO: on client side, console log hit/miss and computers board and then delayed console log of computer move and players board
     // could have logic in here - if gameover emit gameover, or emit guess
     socket.emit('game-over', payload);
   });
 });
+
+
+
+const carrier = new game.Ship('Carrier', 5, ['F1', 'F2', 'F3', 'F4', 'F5']);
+const destroyer = new game.Ship('Destroyer', 4, []);
+const amphibiousAssaultBoat = new game.Ship('amphibiousAssaultBoat', 3, []);
+const patrolBoat = new game.Ship('patrolBoat', 2, []);
+const pirateRowBoat = new game.Ship('pirateRowBoat', 1, []);
+
+const ships = [carrier, destroyer, amphibiousAssaultBoat, patrolBoat, pirateRowBoat];
 
 
 

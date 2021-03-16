@@ -1,26 +1,22 @@
 'use strict';
 
 class GameObject {
-  constructor(ships, gameboard) {
-
-
-
+  constructor(socketId, ships, gameboard) {
+    this.id = socketId;
+    this.ships = ships;
+    this.gameboard = gameboard;
   }
 }
 
 class Ship {
-  constructor(name, hitCounter, coorinates) {
+  constructor(name, hitCounter, coordinates) {
     this.name = name;
     this.hitCounter = hitCounter;
-    this.coorinates = coorinates;
+    this.coordinates = coordinates;
   }
 }
 
-class Carrier extends Ship {
-  constructor(name, hitCounter, coorinates) {
-    super('carrier', 5, ['f1', 'f2', 'f3', 'f4', 'f5']);
-  }
-}
+
 
 class GameBoard {
   constructor(size) {
@@ -63,34 +59,9 @@ class Normal extends GameBoard {
   }
 }
 
-// let board = ''
-// for(let i = 0; i < arr.length; i++){
-//   for(let j =0; i < arr[i]; j++){
-//     board += '|'+ arr[i][j];
-//     }
-//     board += 'n/'
-//  }
-// }
-
-let testBoard = new Normal(10);
-
-// function displayBoard(board){
-//   let horizontalGuide = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-//   let verticalGuide = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-//   let output = '\n' + '   ';
-//   for(let i = 0; i < horizontalGuide.length; i++){
-//     output+= horizontalGuide[i] + '  ';
-//   }
-//   output+= '\n';
-//   for(let i = 0; i < board.size.length; i++){
-//     output+= ' ' + verticalGuide[i] + ' ' ;
-//     for(let j = 0; j< board.size[i].length; j++){
-//       // output += ' ' + board.size[i][j]; 
-//       output += ' ' + '* '; 
-//     }
-//     output+= '\n';
-//   }
-//   return output;
-// }
-
-console.log(testBoard.displayBoard());
+module.exports = {
+  GameObject,
+  Ship,
+  GameBoard,
+  Normal,
+};
