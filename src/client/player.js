@@ -1,6 +1,8 @@
 'use strict';
 
 const socketio = require('socket.io-client');
+const {prompt} = require ('enquirer');
+const semver = require('semver');
 
 // when we deploy to Heroku - will need to change this
 const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
@@ -9,11 +11,59 @@ const sinkyShipServer = socketio.connect(sinkyShipUrl);
 
 //enquirer prompt, 
 //await response
-sinkyShipServer.emit('new-game');
+prompt({
+  type: 'confirm',
+  name: 'start',
+  message: 'Would you like to start a game of Sinky Ship?',
+})
+  .then(answer => {
+    if(answer.start){
+      sinkyShipServer.emit('new-game');
+    }else{
+      console.log(`That's too bad, it's a lot of fun!`);
+      process.exit();
+    }
+  })
+  .catch(console.error);
+
 
 sinkyShipServer.on('game-setup', (payload) => {
   // user receives board, places ships on board
-  sinkyShipServer.emit('setup-complete', payload);
+  let ship = {};
+  const regexPlacement = /^[a-j-A-J]\d$/g;
+  const regexDirection = /^(r|d|l|u|R|D|L|U)$/g;
+  prompt({
+    type: 'input',
+    name: 'shipPlacement',
+    message: 'Please select a starting coordinate(A-J + 1-9) for your battleship that is 5 spaces long Example: `A5',
+    validate(value) {
+      if (!regexPlacement.test(value)) {
+        return prompt();
+      }
+      return true;
+    },
+  })
+    .then(answer => {
+      ship.coordinate= answer.shipPlacement;
+      console.log(ship);
+      prompt({
+        type: 'input',
+        name: 'shipDirection',
+        message: 'Please indicate a direction for your battleship (Right, Down, Left, Up) by entering a R, D, L, or U',
+        validate(value){
+          if(!regexDirection.test(value)){
+            return prompt();
+          }
+          return true;
+        },
+      })
+        .then(answer => {
+          ship.direction= answer.shipDirection;
+          console.log(ship);
+          sinkyShipServer.emit('setup-complete', payload);
+        });
+    })
+    .catch(console.error);
 });
 
 sinkyShipServer.on('guess', (payload) => {
