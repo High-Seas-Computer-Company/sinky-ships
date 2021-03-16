@@ -2,7 +2,6 @@
 
 const socketio = require('socket.io-client');
 const {prompt} = require ('enquirer');
-const semver = require('semver');
 
 // when we deploy to Heroku - will need to change this
 const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
@@ -38,6 +37,7 @@ sinkyShipServer.on('game-setup', (payload) => {
     message: 'Please select a starting coordinate(A-J + 1-9) for your battleship that is 5 spaces long Example: `A5',
     validate(value) {
       if (!regexPlacement.test(value)) {
+        console.log('Please enter a valid coordinate(A-J + 1-9) such as "A5');
         return prompt();
       }
       return true;
@@ -52,6 +52,7 @@ sinkyShipServer.on('game-setup', (payload) => {
         message: 'Please indicate a direction for your battleship (Right, Down, Left, Up) by entering a R, D, L, or U',
         validate(value){
           if(!regexDirection.test(value)){
+            console.log('Please enter a valid ship direction of `R, D, L, U`');
             return prompt();
           }
           return true;
