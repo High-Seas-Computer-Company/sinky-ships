@@ -1,26 +1,22 @@
 'use strict';
 
 class GameObject {
-  constructor(ships, gameboard) {
-
-
-
+  constructor(socketId, ships, gameboard) {
+    this.id = socketId;
+    this.ships = ships;
+    this.gameboard = gameboard;
   }
 }
 
 class Ship {
-  constructor(name, hitCounter, coorinates) {
+  constructor(name, hitCounter, coordinates) {
     this.name = name;
     this.hitCounter = hitCounter;
-    this.coorinates = coorinates;
+    this.coordinates = coordinates;
   }
 }
 
-class Carrier extends Ship {
-  constructor(name, hitCounter, coorinates) {
-    super('carrier', 5, ['f1', 'f2', 'f3', 'f4', 'f5']);
-  }
-}
+
 
 class GameBoard {
   constructor(size) {
@@ -45,11 +41,20 @@ class Normal extends GameBoard {
   }
 }
 
+
+
 // let board = ''
 //for(let i = 0; i < arr.length; i++){
-  // for(let j =0; i < arr[i]; j++){
-  //   board += '|'+ arr[i][j];
-  //   }
-  //   board += 'n/'
+// for(let j =0; i < arr[i]; j++){
+//   board += '|'+ arr[i][j];
+//   }
+//   board += 'n/'
 //  }
 //}
+
+module.exports = {
+  GameObject,
+  Ship,
+  GameBoard,
+  Normal,
+};

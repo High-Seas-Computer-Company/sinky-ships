@@ -1,7 +1,7 @@
 'use strict';
 
 const socketio = require('socket.io-client');
-const game = require('../client/player.js');
+
 // when we deploy to Heroku - will need to change this
 const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
 
@@ -18,7 +18,7 @@ sinkyShipServer.on('game-setup', (payload) => {
 
 sinkyShipServer.on('guess', (payload) => {
   // prompt user, display their board and computer board
-  sinkyShipServer.emit('response', payload); 
+  sinkyShipServer.emit('response', payload);
 });
 
 sinkyShipServer.on('game-over', (payload) => {
