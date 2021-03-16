@@ -26,6 +26,24 @@ class GameBoard {
   constructor(size) {
     this.size = size;
   }
+  displayBoard(){
+    let horizontalGuide = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+    let verticalGuide = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+    let output = '\n' + '   ';
+    for(let i = 0; i < horizontalGuide.length; i++){
+      output+= horizontalGuide[i] + '  ';
+    }
+    output+= '\n';
+    for(let i = 0; i < this.size.length; i++){
+      output+= ' ' + verticalGuide[i] + ' ' ;
+      for(let j = 0; j< this.size[i].length; j++){
+        // output += ' ' + board.size[i][j]; 
+        output += ' ' + '* '; 
+      }
+      output+= '\n';
+    }
+    return output;
+  }
 }
 
 class Normal extends GameBoard {
@@ -46,10 +64,33 @@ class Normal extends GameBoard {
 }
 
 // let board = ''
-//for(let i = 0; i < arr.length; i++){
-  // for(let j =0; i < arr[i]; j++){
-  //   board += '|'+ arr[i][j];
-  //   }
-  //   board += 'n/'
+// for(let i = 0; i < arr.length; i++){
+//   for(let j =0; i < arr[i]; j++){
+//     board += '|'+ arr[i][j];
+//     }
+//     board += 'n/'
 //  }
-//}
+// }
+
+let testBoard = new Normal(10);
+
+// function displayBoard(board){
+//   let horizontalGuide = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+//   let verticalGuide = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+//   let output = '\n' + '   ';
+//   for(let i = 0; i < horizontalGuide.length; i++){
+//     output+= horizontalGuide[i] + '  ';
+//   }
+//   output+= '\n';
+//   for(let i = 0; i < board.size.length; i++){
+//     output+= ' ' + verticalGuide[i] + ' ' ;
+//     for(let j = 0; j< board.size[i].length; j++){
+//       // output += ' ' + board.size[i][j]; 
+//       output += ' ' + '* '; 
+//     }
+//     output+= '\n';
+//   }
+//   return output;
+// }
+
+console.log(testBoard.displayBoard());
