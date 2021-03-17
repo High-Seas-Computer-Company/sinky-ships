@@ -3,14 +3,11 @@
 const socketio = require('socket.io-client');
 const { prompt } = require('enquirer');
 
-// when we deploy to Heroku - will need to change this
-// const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
-const sinkyShipUrl = 'http://localhost:3000/sinky-ship';
+const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
+// const sinkyShipUrl = 'http://localhost:3000/sinky-ship';
 
 const sinkyShipServer = socketio.connect(sinkyShipUrl);
 
-//enquirer prompt, 
-//await response
 prompt({
   type: 'confirm',
   name: 'start',
@@ -30,7 +27,6 @@ const regexPlacement = /^[a-j-A-J]\d$/g;
 const regexDirection = /^(r|d|l|u|R|D|L|U)$/g;
 
 sinkyShipServer.on('game-setup', (payload) => {
-  // user receives board, places ships on board
   console.log('Player Board');
   console.log(displayBoard(payload.playerBoard));
   let shipSetup = {};
@@ -118,7 +114,6 @@ sinkyShipServer.on('guess', (payload) => {
 });
 
 sinkyShipServer.on('game-over', (payload) => {
-  // YOU LOSE
   if (payload.winner === 'Player 1') {
     console.log('You Win!!! You sinky shipped and your enemy is defeated!');
   }
@@ -241,7 +236,6 @@ function displayBoard(board) {
   for (let i = 0; i < board.size.length; i++) {
     output += ' ' + verticalGuide[i] + ' ';
     for (let j = 0; j < board.size[i].length; j++) {
-      // output += ' ' + board.size[i][j];
       if (board.player === 'Player 1') {
         if (board.size[i][j] === 'X') {
           output += ' ' + 'X ';
