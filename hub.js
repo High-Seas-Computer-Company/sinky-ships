@@ -52,6 +52,16 @@ sinkyShip.on('connection', (socket) => {
     // TODO: on client side, console log hit/miss and computers board and then delayed console log of computer move and players board
     // could have logic in here - if gameover emit gameover, or emit guess
     //socket.emit('game-over', payload);
+    if(winChecker(payload.playerBoard.size)){
+      payload.winner = 'Computer';
+      socket.emit('game-over', payload);
+    }
+    else if(winChecker(payload.computerBoard.size)){
+      payload.winner = 'Player 1';
+      socket.emit('game-over', payload);
+    }else{
+      socket.emit('guess', payload);
+    }
   });
 });
 
@@ -193,6 +203,17 @@ function displayShipUp(start, direction, gameboard, shipLength) {
     }
     return true;
   }
+}
+
+function winChecker(gameboard){
+  for (let i = 0; i < gameboard.length; i++) {
+    if (!gameboard[i].includes('$')) {
+      continue;
+    } else if (gameboard[i].includes('$')){
+      return false;
+    }
+  }
+  return true;
 }
 
 
