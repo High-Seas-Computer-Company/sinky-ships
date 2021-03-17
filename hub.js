@@ -22,19 +22,22 @@ sinkyShip.on('connection', (socket) => {
     //else just instantiate new game
     let payload = new game.GameObject();
     payload.playerBoard = new game.Normal();
+    payload.computerBoard = new game.Normal();
+    payload.computerBoard.player = 'Computer';
+    computerShips(payload.computerBoard);
     payload.id = socket.id;
     payload.battleship = new game.Ship('Carrier', 5, []);
-    console.log('NEWGAME', payload);
+    // console.log('NEWGAME', payload);
     socket.emit('game-setup', payload);
   });
 
   socket.on('setup-complete', (payload) => {
-    console.log('SETUP-COMPLETE', payload);
+    // console.log('SETUP-COMPLETE', payload);
     socket.emit('guess', payload);
   });
 
   socket.on('response', (payload) => {
-    console.log('RESPONSE', payload);
+    // console.log('RESPONSE', payload);
     // insert logic here
 
     // TODO: emit hit/miss info and computer move
@@ -45,6 +48,32 @@ sinkyShip.on('connection', (socket) => {
 });
 
 
+function computerShips(board){
+  let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+  let directions = ['r', 'd', 'l', 'u'];
+  const carrier = new game.Ship('battleship', 5, []);
+  let horizontalCoord = Math.floor(Math.random()*10);
+  let verticalCoord = Math.floor(Math.random()*10);
+  let letterCoord = letters[verticalCoord];
+  let coordinates = letterCoord + `${horizontalCoord}`;
+  console.log(coordinates);
+  let placedShip = false;
+  while(!placedShip){
+    let random = Math.floor(Math.random()*4);
+    let direction = directions[random];
+    console.log(direction);
+    if (direction.toLowerCase() === 'l' || direction.toLowerCase() === 'r') {
+      placedShip =  displayShipHorizontal(coordinates, direction, board.size, carrier.hitCounter);
+    }
+    if (direction.toLowerCase() === 'd') {
+      placedShip =  displayShipDown(coordinates, direction, board.size, carrier.hitCounter);
+    }
+    if (direction.toLowerCase() === 'u') {
+      placedShip = displayShipUp(coordinates, direction, board.size, carrier.hitCounter);
+    }
+  }
+  console.log(board.size);
+}
 
 const carrier = new game.Ship('Carrier', 5, ['F1', 'F2', 'F3', 'F4', 'F5']);
 const destroyer = new game.Ship('Destroyer', 4, []);
@@ -55,7 +84,90 @@ const pirateRowBoat = new game.Ship('pirateRowBoat', 1, []);
 const ships = [carrier, destroyer, aABoat, patrolBoat, pirateRowBoat];
 
 
+function displayShipHorizontal(start, direction, gameboard, shipLength) {
+  let index;
+  // let i;
+  for (let i = 0; i < gameboard.length; i++) {
+    let array1 = gameboard[i];
+    index = gameboard[i].indexOf(start);
+    if (index === -1) { continue; }
+    if (direction.toLowerCase() === 'r') {
+      let temp = index;
+      if (index + shipLength > 9) {
+        console.log('Not enough room. Choose a different starting position, or choose to place your ship to the left.');
+        return false;
+      } else {
+        while (index < temp + shipLength) {
+          array1[index] = '$';
+          index++;
+        }
+        return true;
+      }
+    }
+    else if (direction.toLowerCase() === 'l') {
+      let temp = index;
+      if (index - shipLength < 0) {
+        console.log('Not enough room. Choose a different starting position, or choose to place your ship to the right.');
+        return false;
+      } else {
+        while (index > temp - shipLength) {
+          array1[index] = '$';
+          index--;
+        }
+        return true;
+      }
+    }
+  }
+}
 
+function displayShipDown(start, direction, gameboard, shipLength) {
+  let index;
+  let i;
+  let originalRow;
+  for (i = 0; i < gameboard.length; i++) {
+    index = gameboard[i].indexOf(start);
+    if (index === -1) { continue; }
+    else {
+      originalRow = i;
+      break;
+    }
+  }
+
+  if (direction.toLowerCase() === 'd' && originalRow + shipLength > 9) {
+    console.log('\n Not enough room. Choose a different starting position, or choose to place your ship in different direction.');
+    return false;
+  } else if (direction.toLowerCase() === 'd') {
+    for (let j = originalRow; j < (originalRow + shipLength); j++) {
+      gameboard[j][index] = '$';
+    }
+    return true;
+  }
+}
+
+function displayShipUp(start, direction, gameboard, shipLength) {
+  let index;
+  let i;
+  let originalRow;
+  for (i = 0; i < gameboard.length; i++) {
+    index = gameboard[i].indexOf(start);
+    if (index === -1) {
+      continue;
+    } else {
+      originalRow = i;
+      break;
+    }
+  }
+
+  if (direction.toLowerCase() === 'u' && originalRow - shipLength < 0) {
+    console.log('\n Not enough room. Choose a different starting position, or choose to place your ship in different direction.');
+    return false;
+  } else if (direction.toLowerCase() === 'u') {
+    for (let j = originalRow; j > (originalRow - shipLength); j--) {
+      gameboard[j][index] = '$';
+    }
+    return true;
+  }
+}
 
 
 

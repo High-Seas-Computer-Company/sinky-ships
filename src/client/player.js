@@ -26,18 +26,19 @@ prompt({
   })
   .catch(console.error);
 
+const regexPlacement = /^[a-j-A-J]\d$/g;
+const regexDirection = /^(r|d|l|u|R|D|L|U)$/g;
 
 sinkyShipServer.on('game-setup', (payload) => {
   // user receives board, places ships on board
-  console.log('GAME OBJECT', payload);
+  console.log('Player Board');
+  console.log(displayBoard(payload.playerBoard));
   let shipSetup = {};
-  const regexPlacement = /^[a-j-A-J]\d$/g;
-  const regexDirection = /^(r|d|l|u|R|D|L|U)$/g;
   prompt({
     type: 'input',
     name: 'shipPlacement',
     message: 'Please select a starting coordinate(A-J + 1-9) for your sinky ship that is 5 spaces long Example: A5',
-    validate(value) {
+    validate(value){
       if (!regexPlacement.test(value)) {
         console.log('Please enter a valid coordinate(A-J + 1-9) such as A5');
         return prompt();
@@ -53,12 +54,10 @@ sinkyShipServer.on('game-setup', (payload) => {
         message: 'Please indicate a direction for your sinky ship (Right, Down, Left, Up) by entering a R, D, L, or U',
         validate(value) {
           if (!value.match(regexDirection)) {
-            console.log('INVALID REGEX', value);
             console.log('Please enter a valid ship direction of R, D, L, U');
             return prompt();
           }
 
-          console.log('THIS IS THE VALUE', value);
           if (value.toLowerCase() === 'l' || value.toLowerCase() === 'r') {
             return displayShipHorizontal(shipSetup.coordinate, value, payload.playerBoard.size, payload.battleship.hitCounter);
           }
@@ -72,8 +71,8 @@ sinkyShipServer.on('game-setup', (payload) => {
       })
         .then(answer => {
           shipSetup.direction = answer.shipDirection;
-          console.log('setup', shipSetup);
-          console.log(payload.playerBoard.size);
+          console.log('Player Board');
+          console.log(displayBoard(payload.playerBoard));
           sinkyShipServer.emit('setup-complete', payload);
         });
     })
@@ -81,8 +80,33 @@ sinkyShipServer.on('game-setup', (payload) => {
 });
 
 sinkyShipServer.on('guess', (payload) => {
-  // prompt user, display their board and computer board
-  sinkyShipServer.emit('response', payload);
+  console.log('YOUR TURN');
+  console.log('Player Board');
+  console.log(displayBoard(payload.playerBoard));
+  console.log('Choose a coordinate on the computer`s board to sinky ship!');
+  console.log('Computer Board');
+  console.log(displayBoard(payload.computerBoard));
+  prompt({
+    type: 'input',
+    name: 'attack',
+    message: 'Please select a attack coordinate(A-J + 1-9) for your torpedo that has not already been hit Example: H2',
+    validate(value){
+      if (!value.match(regexPlacement)) {
+        console.log('Please enter a valid coordinate(A-J + 1-9) such as A5');
+        return prompt();
+      }
+      if(!checkBoard(payload.computerBoard, value)){
+        return prompt();
+      }else{
+        return true;
+      }
+    },
+  })
+    .then(answer => {
+      console.log(displayBoard(payload.computerBoard));
+      sinkyShipServer.emit('response', payload);
+    })
+    .catch(console.error);
 });
 
 sinkyShipServer.on('game-over', (payload) => {
@@ -136,7 +160,6 @@ function displayShipDown(start, direction, gameboard, shipLength) {
   let i;
   let originalRow;
   for (i = 0; i < gameboard.length; i++) {
-    // console.log('I AM OG ROW', originalRow);
     index = gameboard[i].indexOf(start);
     if (index === -1) { continue; }
     else {
@@ -150,7 +173,6 @@ function displayShipDown(start, direction, gameboard, shipLength) {
     return prompt();
   } else if (direction.toLowerCase() === 'd') {
     for (let j = originalRow; j < (originalRow + shipLength); j++) {
-      // console.log('GAMEBOARd originalRow I', gameboard[j][index]);
       gameboard[j][index] = '$';
     }
     return true;
@@ -162,7 +184,6 @@ function displayShipUp(start, direction, gameboard, shipLength) {
   let i;
   let originalRow;
   for (i = 0; i < gameboard.length; i++) {
-    // console.log('I AM UP originalRow', originalRow);
     index = gameboard[i].indexOf(start);
     if (index === -1) {
       continue;
@@ -180,5 +201,55 @@ function displayShipUp(start, direction, gameboard, shipLength) {
       gameboard[j][index] = '$';
     }
     return true;
+  }
+}
+
+function displayBoard(board) {
+  let horizontalGuide = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  let verticalGuide = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+  let output = '\n' + '    ';
+  for (let i = 0; i < horizontalGuide.length; i++) {
+    output += horizontalGuide[i] + '  ';
+  }
+  output += '\n';
+  for (let i = 0; i < board.size.length; i++) {
+    output += ' ' + verticalGuide[i] + ' ';
+    for (let j = 0; j < board.size[i].length; j++) {
+      // output += ' ' + board.size[i][j];
+      if(board.player === 'Player 1'){
+        if(board.size[i][j] === '$'){
+          output+= ' ' + board.size[i][j] + ' ';
+        }else{
+          output += ' ' + '* ';
+        }
+      }else{
+        if(board.size[i][j] === 'X'){
+          output+= ' '+ 'X ';
+        }else if(board.size[i][j] === 'O'){
+          output += ' '+ 'O ';
+        }else{
+          output += ' ' + '* ';
+        }
+      }
+    }
+    output += '\n';
+  }
+  return output;
+}
+
+function checkBoard(board, value){
+  let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+  let verticalCoordLetter= value.substring(0,1).toUpperCase();
+  let verticalCoordNumber = letters.indexOf(verticalCoordLetter);
+  let horizontalCoord = Number(value.substring(1,2));
+  if(board.size[verticalCoordNumber][horizontalCoord] !== 'X' || board.size[verticalCoordNumber][horizontalCoord] !== 'O'){
+    if(board.size[verticalCoordNumber][horizontalCoord] === '$'){
+      board.size[verticalCoordNumber][horizontalCoord] = 'X';
+    }else{
+      board.size[verticalCoordNumber][horizontalCoord] = 'O' ;
+    }
+    return true;
+  }else{
+    return false;
   }
 }
