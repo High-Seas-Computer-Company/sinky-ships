@@ -24,7 +24,7 @@ describe('creating a new normal gameboard', () => {
     const board = new Normal(10);
     // console.log('this is board', board);
 
-    expect(board.size[0][5]).toEqual('A6');
+    expect(board.size[0][5]).toEqual('A5');
     expect(board.size[3][8]).toEqual('D9');
     expect(board.size[9][9]).toEqual('J10');
   });
@@ -59,7 +59,7 @@ describe('creating a new gameobject', () => {
     const board = new Normal(10);
     const gameObject = new GameObject('socketId', 'ship', board);
 
-    expect(gameObject.gameboard.size[0][5]).toEqual('A6');
+    expect(gameObject.gameboard.size[0][5]).toEqual('A5');
     expect(gameObject.gameboard.size[3][8]).toEqual('D9');
     expect(gameObject.gameboard.size[9][9]).toEqual('J10');
   });
