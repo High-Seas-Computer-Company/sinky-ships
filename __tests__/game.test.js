@@ -60,8 +60,8 @@ describe('creating a new gameobject', () => {
     const gameObject = new GameObject('socketId', 'ship', board);
 
     expect(gameObject.gameboard.size[0][5]).toEqual('A5');
-    expect(gameObject.gameboard.size[3][8]).toEqual('D9');
-    expect(gameObject.gameboard.size[9][9]).toEqual('J10');
+    expect(gameObject.gameboard.size[3][8]).toEqual('D8');
+    expect(gameObject.gameboard.size[9][9]).toEqual('J9');
   });
 
 });
