@@ -4,7 +4,7 @@ const socketio = require('socket.io');
 require('dotenv').config();
 const io = socketio(process.env.PORT);
 
-const game = require('./server/game.js');
+const game = require('./src/server/game.js');
 
 const sinkyShip = io.of('/sinky-ship');
 
@@ -17,9 +17,13 @@ sinkyShip.on('connection', (socket) => {
   console.log('New connection : ' + socket.id);
 
 
-  socket.on('new-game', payload => {
+  socket.on('new-game', () => {
     //if game with socket.id exists delete old game, instantiate new game
     //else just instantiate new game
+    let payload = new game.GameObject();
+    payload.playerBoard = new game.Normal();
+    payload.id = socket.id;
+    payload.battleship = new game.Ship('Carrier', 5, []);
     console.log('NEWGAME', payload);
     socket.emit('game-setup', payload);
   });
