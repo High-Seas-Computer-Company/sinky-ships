@@ -17,13 +17,10 @@ io.on('connection', socket => {
 });
 
 sinkyShip.on('connection', (socket) => {
-  // add socket.id into the game object, adding new id on instantiation
   console.log('New connection : ' + socket.id);
 
 
   socket.on('new-game', () => {
-    //if game with socket.id exists delete old game, instantiate new game
-    //else just instantiate new game
     let payload = new game.GameObject();
     payload.playerBoard = new game.Normal();
     payload.computerBoard = new game.Normal();
@@ -31,7 +28,6 @@ sinkyShip.on('connection', (socket) => {
     computerShips(payload.computerBoard);
     payload.id = socket.id;
     payload.battleship = new game.Ship('Carrier', 5, []);
-    // console.log('NEWGAME', payload);
     socket.emit('game-setup', payload);
   });
 
@@ -44,14 +40,6 @@ sinkyShip.on('connection', (socket) => {
     const guess = validateComputerGuess();
     checkBoard(payload.playerBoard, guess);
     console.log(payload.playerBoard);
-
-    // console.log('RESPONSE', payload);
-    // insert logic here
-
-    // TODO: emit hit/miss info and computer move
-    // TODO: on client side, console log hit/miss and computers board and then delayed console log of computer move and players board
-    // could have logic in here - if gameover emit gameover, or emit guess
-    //socket.emit('game-over', payload);
     if(winChecker(payload.playerBoard.size)){
       payload.winner = 'Computer';
       socket.emit('game-over', payload);
