@@ -38,7 +38,7 @@ sinkyShipServer.on('game-setup', (payload) => {
     type: 'input',
     name: 'shipPlacement',
     message: 'Please select a starting coordinate(A-J + 1-9) for your sinky ship that is 5 spaces long Example: A5',
-    validate(value){
+    validate(value) {
       if (!regexPlacement.test(value)) {
         console.log('Please enter a valid coordinate(A-J + 1-9) such as A5');
         return prompt();
@@ -85,20 +85,28 @@ sinkyShipServer.on('guess', (payload) => {
   console.log(displayBoard(payload.playerBoard));
   console.log('Choose a coordinate on the computer`s board to sinky ship!');
   console.log('Computer Board');
-  console.log(displayBoard(payload.computerBoard));
+  console.log(
+    (displayBoard(payload.computerBoard)));
   prompt({
     type: 'input',
     name: 'attack',
     message: 'Please select a attack coordinate(A-J + 1-9) for your torpedo that has not already been hit Example: H2',
-    validate(value){
+    validate(value) {
       if (!value.match(regexPlacement)) {
         console.log('Please enter a valid coordinate(A-J + 1-9) such as A5');
         return prompt();
       }
-      if(!checkBoard(payload.computerBoard, value)){
-        return prompt();
-      }else{
+      let boardCheck = checkBoard(payload.computerBoard, value);
+      console.log(boardCheck);
+      if (boardCheck.status === 'Hit') {
+        console.log('HIT! YOUR ON YOUR WAY TO SINKY SHIP');
         return true;
+      } else if (boardCheck.status === 'Miss') {
+        console.log('MISS! YOU`LL HAVE TO AIM BETTER');
+        return true;
+      } else if (!boardCheck) {
+        console.log('We did not make it into our if statements');
+        return prompt();
       }
     },
   })
@@ -111,11 +119,29 @@ sinkyShipServer.on('guess', (payload) => {
 
 sinkyShipServer.on('game-over', (payload) => {
   // YOU LOSE
-  console.log('GAMEOVER', payload);
-  // TODO: render the player board and computer board to terminal
-  // TODO: ask if want to play again
-  //if yes  sinkyShipServer.emit('new-game');
-  //else process.exit
+  if (payload.winner === 'Player 1') {
+    console.log('You Win!!! You sinky shipped and your enemy is defeated!');
+  }
+  if (payload.winner === 'Computer') {
+    console.log('You Lose!!! You have been sinky shipped and your enemy is victorious!');
+  }
+  console.log('GAMEOVER');
+  console.log('Computer Board \n', displayBoard(payload.computerBoard));
+  console.log('Player Board \n', displayBoard(payload.playerBoard));
+  prompt({
+    type: 'confirm',
+    name: 'start',
+    message: 'Would you like to start a new game of Sinky Ship?',
+  })
+    .then(answer => {
+      if (answer.start) {
+        sinkyShipServer.emit('new-game');
+      } else {
+        console.log(`That's too bad, we had a lot of fun!`);
+        process.exit();
+      }
+    })
+    .catch(console.error);
 });
 
 
@@ -216,18 +242,18 @@ function displayBoard(board) {
     output += ' ' + verticalGuide[i] + ' ';
     for (let j = 0; j < board.size[i].length; j++) {
       // output += ' ' + board.size[i][j];
-      if(board.player === 'Player 1'){
-        if(board.size[i][j] === '$'){
-          output+= ' ' + board.size[i][j] + ' ';
-        }else{
+      if (board.player === 'Player 1') {
+        if (board.size[i][j] === '$') {
+          output += ' ' + board.size[i][j] + ' ';
+        } else {
           output += ' ' + '* ';
         }
-      }else{
-        if(board.size[i][j] === 'X'){
-          output+= ' '+ 'X ';
-        }else if(board.size[i][j] === 'O'){
-          output += ' '+ 'O ';
-        }else{
+      } else {
+        if (board.size[i][j] === 'X') {
+          output += ' ' + 'X ';
+        } else if (board.size[i][j] === 'O') {
+          output += ' ' + 'O ';
+        } else {
           output += ' ' + '* ';
         }
       }
@@ -237,19 +263,20 @@ function displayBoard(board) {
   return output;
 }
 
-function checkBoard(board, value){
+function checkBoard(board, value) {
   let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-  let verticalCoordLetter= value.substring(0,1).toUpperCase();
+  let verticalCoordLetter = value.substring(0, 1).toUpperCase();
   let verticalCoordNumber = letters.indexOf(verticalCoordLetter);
-  let horizontalCoord = Number(value.substring(1,2));
-  if(board.size[verticalCoordNumber][horizontalCoord] !== 'X' || board.size[verticalCoordNumber][horizontalCoord] !== 'O'){
-    if(board.size[verticalCoordNumber][horizontalCoord] === '$'){
-      board.size[verticalCoordNumber][horizontalCoord] = 'X';
-    }else{
-      board.size[verticalCoordNumber][horizontalCoord] = 'O' ;
-    }
-    return true;
-  }else{
+  let horizontalCoord = Number(value.substring(1, 2));
+  console.log('Hit coordinates', board.size[verticalCoordNumber][horizontalCoord]);
+  if (board.size[verticalCoordNumber][horizontalCoord] === 'X' || board.size[verticalCoordNumber][horizontalCoord] === 'O') {
     return false;
+  }
+  else if (board.size[verticalCoordNumber][horizontalCoord] === '$') {
+    board.size[verticalCoordNumber][horizontalCoord] = 'X';
+    return { status: 'Hit' };
+  } else {
+    board.size[verticalCoordNumber][horizontalCoord] = 'O';
+    return { status: 'Miss' };
   }
 }
