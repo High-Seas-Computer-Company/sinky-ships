@@ -10,6 +10,14 @@ const sinkyShip = io.of('/sinky-ship');
 
 let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
+const carrier = new game.Ship('Carrier', 5, []);
+const destroyer = new game.Ship('Destroyer', 4, []);
+const aABoat = new game.Ship('amphibiousAssaultBoat', 3, []);
+const patrolBoat = new game.Ship('patrolBoat', 2, []);
+const pirateRowBoat = new game.Ship('pirateRowBoat', 1, []);
+
+const ships = [carrier, destroyer, aABoat, patrolBoat, pirateRowBoat];
+
 const computerGuessesMade = [];
 
 io.on('connection', socket => {
@@ -27,19 +35,47 @@ sinkyShip.on('connection', (socket) => {
     payload.computerBoard.player = 'Computer';
     computerShips(payload.computerBoard);
     payload.id = socket.id;
-    payload.battleship = new game.Ship('Carrier', 5, []);
-    socket.emit('game-setup', payload);
+    ships.forEach(ship => {
+      payload[ship.name]= ship;
+    });
+    socket.emit('game-setup1', payload);
   });
 
-  socket.on('setup-complete', (payload) => {
+  socket.on('setup-complete1', (payload) => {
+    console.log(payload.coordinates);
+    // console.log('SETUP-COMPLETE', payload);
+    socket.emit('game-setup2', payload);
+  });
+
+  socket.on('setup-complete2', (payload) => {
+    // console.log('SETUP-COMPLETE', payload);
+    console.log(payload.coordinates);
+    socket.emit('game-setup3', payload);
+  });
+
+  socket.on('setup-complete3', (payload) => {
+    console.log(payload.coordinates);
+    // console.log('SETUP-COMPLETE', payload);
+    socket.emit('game-setup4', payload);
+  });
+
+  socket.on('setup-complete4', (payload) => {
+    console.log(payload.coordinates);
+    // console.log('SETUP-COMPLETE', payload);
+    socket.emit('game-setup5', payload);
+  });
+
+  socket.on('setup-complete5', (payload) => {
+    console.log(payload.coordinates);
     // console.log('SETUP-COMPLETE', payload);
     socket.emit('guess', payload);
   });
 
   socket.on('response', (payload) => {
     const guess = validateComputerGuess();
-    checkBoard(payload.playerBoard, guess);
+    let hitOrMiss = checkBoard(payload.playerBoard, guess);
     console.log(payload.playerBoard);
+    payload.computerGuess = hitOrMiss.status;
     if(winChecker(payload.playerBoard.size)){
       payload.winner = 'Computer';
       socket.emit('game-over', payload);
@@ -56,7 +92,7 @@ sinkyShip.on('connection', (socket) => {
 
 function computerShips(board) {
   let directions = ['r', 'd', 'l', 'u'];
-  const carrier = new game.Ship('battleship', 5, []);
+  const carrier = new game.Ship('carrier', 5, []);
   let horizontalCoord = Math.floor(Math.random() * 10);
   let verticalCoord = Math.floor(Math.random() * 10);
   let letterCoord = letters[verticalCoord];
@@ -97,15 +133,6 @@ function validateComputerGuess() {
   return guess;
 }
 
-console.log('computer guess: ', validateComputerGuess(), ' computer guess array: ');
-
-const carrier = new game.Ship('Carrier', 5, ['F1', 'F2', 'F3', 'F4', 'F5']);
-const destroyer = new game.Ship('Destroyer', 4, []);
-const aABoat = new game.Ship('amphibiousAssaultBoat', 3, []);
-const patrolBoat = new game.Ship('patrolBoat', 2, []);
-const pirateRowBoat = new game.Ship('pirateRowBoat', 1, []);
-
-const ships = [carrier, destroyer, aABoat, patrolBoat, pirateRowBoat];
 
 
 function displayShipHorizontal(start, direction, gameboard, shipLength) {
