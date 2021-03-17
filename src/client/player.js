@@ -243,7 +243,11 @@ function displayBoard(board) {
     for (let j = 0; j < board.size[i].length; j++) {
       // output += ' ' + board.size[i][j];
       if (board.player === 'Player 1') {
-        if (board.size[i][j] === '$') {
+        if (board.size[i][j] === 'X') {
+          output += ' ' + 'X ';
+        } else if (board.size[i][j] === 'O') {
+          output += ' ' + 'O ';
+        } else if (board.size[i][j] === '$') {
           output += ' ' + board.size[i][j] + ' ';
         } else {
           output += ' ' + '* ';

@@ -41,9 +41,9 @@ sinkyShip.on('connection', (socket) => {
   });
 
   socket.on('response', (payload) => {
-    // const guess = validateComputerGuess();
-    // payload.guess = guess;
-    // socket.emit('guess', payload);
+    const guess = validateComputerGuess();
+    checkBoard(payload.playerBoard, guess);
+    console.log(payload.playerBoard);
 
     // console.log('RESPONSE', payload);
     // insert logic here
@@ -214,6 +214,24 @@ function winChecker(gameboard){
     }
   }
   return true;
+}
+
+function checkBoard(board, value) {
+  let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+  let verticalCoordLetter = value.substring(0, 1).toUpperCase();
+  let verticalCoordNumber = letters.indexOf(verticalCoordLetter);
+  let horizontalCoord = Number(value.substring(1, 2));
+  console.log('Hit coordinates', board.size[verticalCoordNumber][horizontalCoord]);
+  if (board.size[verticalCoordNumber][horizontalCoord] === 'X' || board.size[verticalCoordNumber][horizontalCoord] === 'O') {
+    return false;
+  }
+  else if (board.size[verticalCoordNumber][horizontalCoord] === '$') {
+    board.size[verticalCoordNumber][horizontalCoord] = 'X';
+    return { status: 'Hit' };
+  } else {
+    board.size[verticalCoordNumber][horizontalCoord] = 'O';
+    return { status: 'Miss' };
+  }
 }
 
 
