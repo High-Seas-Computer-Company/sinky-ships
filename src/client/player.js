@@ -3,8 +3,8 @@
 const socketio = require('socket.io-client');
 const { prompt } = require('enquirer');
 
-// const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
-const sinkyShipUrl = 'http://localhost:3000/sinky-ship';
+const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
+// const sinkyShipUrl = 'http://localhost:3000/sinky-ship';
 
 const sinkyShipServer = socketio.connect(sinkyShipUrl);
 
