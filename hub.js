@@ -48,11 +48,11 @@ sinkyShip.on('connection', (socket) => {
 
 const carrier = new game.Ship('Carrier', 5, ['F1', 'F2', 'F3', 'F4', 'F5']);
 const destroyer = new game.Ship('Destroyer', 4, []);
-const amphibiousAssaultBoat = new game.Ship('amphibiousAssaultBoat', 3, []);
+const aABoat = new game.Ship('amphibiousAssaultBoat', 3, []);
 const patrolBoat = new game.Ship('patrolBoat', 2, []);
 const pirateRowBoat = new game.Ship('pirateRowBoat', 1, []);
 
-const ships = [carrier, destroyer, amphibiousAssaultBoat, patrolBoat, pirateRowBoat];
+const ships = [carrier, destroyer, aABoat, patrolBoat, pirateRowBoat];
 
 
 
