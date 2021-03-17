@@ -16,12 +16,11 @@ class Ship {
   }
 }
 
-
-
 class GameBoard {
   constructor(size) {
     this.size = size;
   }
+
   displayBoard() {
     let horizontalGuide = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     let verticalGuide = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
@@ -39,62 +38,6 @@ class GameBoard {
       output += '\n';
     }
     return output;
-  }
-
-  displayShip(start, direction, gameboard, shipLength) {
-    let index;
-    let i;
-    // let indexLoopCounter = 0;
-    for (i = 0; i < gameboard.length; i++) {
-      let array1 = gameboard[i];
-      index = gameboard[i].indexOf(start);
-      // if invalid index is selected, will loop through gameboard adding 1 to counter. When it has gone through max times. it will return error
-      // if (indexLoopCounter < 9) {
-      if (index === -1) {
-        // indexLoopCounter++;
-        continue;
-      }
-      // } else if (indexLoopCounter > 9) {
-      //   if (index === -1) {
-      // return 'Error, invalid coordinates';
-      //   }
-      // }
-      // console.log(index);
-      // array1[index] = '$';
-      if (direction === 'right') {
-        let temp = index;
-
-        if (index + shipLength > 9) {
-
-          console.log('Not enough room. Choose a different starting position, or choose to place your ship to the left.');
-
-        } else {
-
-          while (index < temp + shipLength) {
-            array1[index] = '$';
-            index++;
-          }
-        }
-      } else if (direction === 'left') {
-        let temp = index;
-
-        if (index - shipLength < 0) {
-
-          console.log('Not enough room. Choose a different starting position, or choose to place your ship to the right.');
-
-        } else {
-
-          while (index > temp - shipLength) {
-            array1[index] = '$';
-            index--;
-          }
-        }
-      } else if (direction === 'down') {
-        return 'do stuff';
-      } else if (direction === 'up') {
-        return 'do stuff';
-      }
-    }
   }
 
   displayShot(coord) {
