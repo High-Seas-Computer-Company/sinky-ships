@@ -8,6 +8,10 @@ const game = require('./src/server/game.js');
 
 const sinkyShip = io.of('/sinky-ship');
 
+let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+
+const computerGuessesMade = [];
+
 io.on('connection', socket => {
   console.log('New connection created : ' + socket.id);
 });
@@ -37,12 +41,17 @@ sinkyShip.on('connection', (socket) => {
   });
 
   socket.on('response', (payload) => {
+    // const guess = validateComputerGuess();
+    // payload.guess = guess;
+    // socket.emit('guess', payload);
+
     // console.log('RESPONSE', payload);
     // insert logic here
 
     // TODO: emit hit/miss info and computer move
     // TODO: on client side, console log hit/miss and computers board and then delayed console log of computer move and players board
     // could have logic in here - if gameover emit gameover, or emit guess
+    //socket.emit('game-over', payload);
     if(winChecker(payload.playerBoard.size)){
       payload.winner = 'Computer';
       socket.emit('game-over', payload);
@@ -57,25 +66,24 @@ sinkyShip.on('connection', (socket) => {
 });
 
 
-function computerShips(board){
-  let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+function computerShips(board) {
   let directions = ['r', 'd', 'l', 'u'];
   const carrier = new game.Ship('battleship', 5, []);
-  let horizontalCoord = Math.floor(Math.random()*10);
-  let verticalCoord = Math.floor(Math.random()*10);
+  let horizontalCoord = Math.floor(Math.random() * 10);
+  let verticalCoord = Math.floor(Math.random() * 10);
   let letterCoord = letters[verticalCoord];
   let coordinates = letterCoord + `${horizontalCoord}`;
   console.log(coordinates);
   let placedShip = false;
-  while(!placedShip){
-    let random = Math.floor(Math.random()*4);
+  while (!placedShip) {
+    let random = Math.floor(Math.random() * 4);
     let direction = directions[random];
     console.log(direction);
     if (direction.toLowerCase() === 'l' || direction.toLowerCase() === 'r') {
-      placedShip =  displayShipHorizontal(coordinates, direction, board.size, carrier.hitCounter);
+      placedShip = displayShipHorizontal(coordinates, direction, board.size, carrier.hitCounter);
     }
     if (direction.toLowerCase() === 'd') {
-      placedShip =  displayShipDown(coordinates, direction, board.size, carrier.hitCounter);
+      placedShip = displayShipDown(coordinates, direction, board.size, carrier.hitCounter);
     }
     if (direction.toLowerCase() === 'u') {
       placedShip = displayShipUp(coordinates, direction, board.size, carrier.hitCounter);
@@ -83,6 +91,25 @@ function computerShips(board){
   }
   console.log(board.size);
 }
+
+function generateComputerGuess() {
+  let horizontalCoord = Math.floor(Math.random() * 10);
+  let verticalCoord = Math.floor(Math.random() * 10);
+  let letterCoord = letters[verticalCoord];
+  let coordinates = letterCoord + `${horizontalCoord}`;
+  return coordinates;
+}
+
+function validateComputerGuess() {
+  let guess = generateComputerGuess();
+  while (computerGuessesMade.includes(guess)) {
+    guess = generateComputerGuess();
+  }
+  computerGuessesMade.push(guess);
+  return guess;
+}
+
+console.log('computer guess: ', validateComputerGuess(), ' computer guess array: ');
 
 const carrier = new game.Ship('Carrier', 5, ['F1', 'F2', 'F3', 'F4', 'F5']);
 const destroyer = new game.Ship('Destroyer', 4, []);
