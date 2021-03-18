@@ -5,12 +5,31 @@ const { prompt } = require('enquirer');
 const chalk = require('chalk');
 const log = console.log;
 const error = chalk.bold.red;
+var figlet = require('figlet');
 
 
 // const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
 const sinkyShipUrl = 'http://localhost:3000/sinky-ship';
 
 const sinkyShipServer = socketio.connect(sinkyShipUrl);
+
+figlet('Sinky Ship', function (err, data) {
+  if (err) {
+    console.log('Something went wrong...');
+    console.dir(err);
+    return;
+  }
+  log(chalk.cyan.bold('\n' + data + '\n'));
+});
+
+console.log(
+`   __|__ |___| |\\ \n` +
+`   |o__| |___| | \\ \n` +
+`   |___| |___| |o \\ \n` +
+`  _|___| |___| |__o\\ \n` +
+` /...\\_____|___|____\\_/ \n ` +
+`\\   o * o * * o o  / `);
+log(chalk.blue(`~~~~~~~~~~~~~~~~~~~~~~~~~~`));
 
 prompt({
   type: 'confirm',
@@ -29,17 +48,17 @@ prompt({
 
 const regexPlacement = /^[a-j-A-J]\d$/;
 const regexDirection = /^(r|d|l|u|R|D|L|U)$/;
-function regexPlacementTest(value){
-  if(!regexPlacement.test(value)){
+function regexPlacementTest(value) {
+  if (!regexPlacement.test(value)) {
     log(error('\n Please enter a valid coordinate(A-J + 1-9) such as A5 \n'));
     // console.log('Please enter a valid coordinate(A-J + 1-9) such as A5');
     return false;
-  }else{
+  } else {
     return true;
   }
 }
 let shipsPlaced = 1;
-function shipPlacementSetup(payload,ship){
+function shipPlacementSetup(payload, ship) {
 
   let shipSetup = {};
   prompt({
@@ -50,7 +69,7 @@ function shipPlacementSetup(payload,ship){
       if (!regexPlacementTest(value)) {
         return prompt();
       }
-      if(!initialCoordinateCheck(payload.playerBoard, value)){
+      if (!initialCoordinateCheck(payload.playerBoard, value)) {
         log(error('Ship already at this coordinate location, choose again'));
         return prompt();
       }
@@ -73,10 +92,10 @@ function shipPlacementSetup(payload,ship){
             return displayShipHorizontal(shipSetup.coordinate, value, payload.playerBoard.size, ship.hitCounter);
           }
           if (value.toLowerCase() === 'd') {
-            return displayShipDown( shipSetup.coordinate, value, payload.playerBoard.size, ship.hitCounter);
+            return displayShipDown(shipSetup.coordinate, value, payload.playerBoard.size, ship.hitCounter);
           }
           if (value.toLowerCase() === 'u') {
-            return displayShipUp( shipSetup.coordinate, value, payload.playerBoard.size, ship.hitCounter);
+            return displayShipUp(shipSetup.coordinate, value, payload.playerBoard.size, ship.hitCounter);
           }
         },
       })
@@ -93,31 +112,31 @@ function shipPlacementSetup(payload,ship){
     .catch(console.error);
 }
 
-sinkyShipServer.on('game-setup1',  (payload) => {
+sinkyShipServer.on('game-setup1', (payload) => {
   log(chalk.green.inverse('Player Board'));
   log(displayBoard(payload.playerBoard));
   shipPlacementSetup(payload, payload.Carrier);
 });
 
-sinkyShipServer.on('game-setup2',  (payload) => {
+sinkyShipServer.on('game-setup2', (payload) => {
   log(chalk.green.inverse('Player Board'));
   log(displayBoard(payload.playerBoard));
   shipPlacementSetup(payload, payload.Destroyer);
 });
 
-sinkyShipServer.on('game-setup3',  (payload) => {
+sinkyShipServer.on('game-setup3', (payload) => {
   log(chalk.green.inverse('Player Board'));
   log(displayBoard(payload.playerBoard));
   shipPlacementSetup(payload, payload.amphibiousAssaultBoat);
 });
 
-sinkyShipServer.on('game-setup4',  (payload) => {
+sinkyShipServer.on('game-setup4', (payload) => {
   log(chalk.green.inverse('Player Board'));
   log(displayBoard(payload.playerBoard));
   shipPlacementSetup(payload, payload.patrolBoat);
 });
 
-sinkyShipServer.on('game-setup5',  (payload) => {
+sinkyShipServer.on('game-setup5', (payload) => {
   log(chalk.green.inverse('Player Board'));
   log(displayBoard(payload.playerBoard));
   shipPlacementSetup(payload, payload.pirateRowBoat);
@@ -127,10 +146,10 @@ sinkyShipServer.on('guess', (payload) => {
   log(chalk.green.inverse('Player Board'));
   log(displayBoard(payload.playerBoard));
 
-  if(payload.computerGuess === 'Hit'){
+  if (payload.computerGuess === 'Hit') {
     log(chalk.yellow('The computer has hit your ship!'));
   }
-  if(payload.computerGuess === 'Miss'){
+  if (payload.computerGuess === 'Miss') {
     log(chalk.magenta('Good ship placement! The computer missed your sinky ship!'));
   }
   log(chalk.green('YOUR TURN'));
@@ -162,13 +181,14 @@ sinkyShipServer.on('guess', (payload) => {
     .then(answer => {
       log(chalk.yellow.inverse('Computer Board'));
       log(displayBoard(payload.computerBoard));
-      if(payload.missileStatus === 'Hit'){
+      if (payload.missileStatus === 'Hit') {
         log(chalk.magenta('HIT! YOU\'RE ON YOUR WAY TO SINKY SHIP'));
       }
-      if(payload.missileStatus === 'Miss'){
+      if (payload.missileStatus === 'Miss') {
         log(chalk.yellow('MISS! YOU`LL HAVE TO AIM BETTER THAN THAT!'));
       }
       sinkyShipServer.emit('response', payload);
+      console.log('Pirate Computer is thinking....Going to sinky ship!');
     })
     .catch(console.error);
 });
@@ -202,7 +222,7 @@ sinkyShipServer.on('game-over', (payload) => {
 
 
 
-function displayShipHorizontal( start, direction, gameboard, shipLength) {
+function displayShipHorizontal(start, direction, gameboard, shipLength) {
   let index;
   for (let i = 0; i < gameboard.length; i++) {
     let array1 = gameboard[i];
@@ -217,7 +237,7 @@ function displayShipHorizontal( start, direction, gameboard, shipLength) {
 
       } else {
         while (checkIndex < temp + shipLength) {
-          if(array1[checkIndex] ==='$'){
+          if (array1[checkIndex] === '$') {
             return prompt();
           }
           checkIndex++;
@@ -238,7 +258,7 @@ function displayShipHorizontal( start, direction, gameboard, shipLength) {
 
       } else {
         while (checkIndex > temp - shipLength) {
-          if(array1[checkIndex] === '$'){
+          if (array1[checkIndex] === '$') {
             return prompt();
           }
           checkIndex--;
@@ -253,7 +273,7 @@ function displayShipHorizontal( start, direction, gameboard, shipLength) {
   }
 }
 
-function displayShipDown( start, direction, gameboard, shipLength) {
+function displayShipDown(start, direction, gameboard, shipLength) {
   let index;
   let i;
   let originalRow;
@@ -272,7 +292,7 @@ function displayShipDown( start, direction, gameboard, shipLength) {
     return prompt();
   } else if (direction.toLowerCase() === 'd') {
     for (let j = originalRow; j < (originalRow + shipLength); j++) {
-      if(gameboard[j][index] === '$'){
+      if (gameboard[j][index] === '$') {
         return prompt();
       }
     }
@@ -283,7 +303,7 @@ function displayShipDown( start, direction, gameboard, shipLength) {
   }
 }
 
-function displayShipUp( start, direction, gameboard, shipLength) {
+function displayShipUp(start, direction, gameboard, shipLength) {
   let index;
   let i;
   let originalRow;
@@ -304,7 +324,7 @@ function displayShipUp( start, direction, gameboard, shipLength) {
     return prompt();
   } else if (direction.toLowerCase() === 'u') {
     for (let j = originalRow; j > (originalRow - shipLength); j--) {
-      if(gameboard[j][index] === '$'){
+      if (gameboard[j][index] === '$') {
         return prompt();
       }
     }
@@ -328,9 +348,9 @@ function displayBoard(board) {
     for (let j = 0; j < board.size[i].length; j++) {
       if (board.player === 'Player 1') {
         if (board.size[i][j] === 'X') {
-          output += ' ' + chalk.green.bold('X ');
+          output += ' ' + chalk.yellow.bold('X ');
         } else if (board.size[i][j] === 'O') {
-          output += chalk.bgBlue(' ') + chalk.bgBlue.black('O ');
+          output += chalk.bgCyan(' ') + chalk.bgCyan.black('o ');
         } else if (board.size[i][j] === '$') {
           output += ' ' + chalk.magenta.bold('$') + ' ';
         } else {
@@ -340,7 +360,7 @@ function displayBoard(board) {
         if (board.size[i][j] === 'X') {
           output += ' ' + chalk.green.bold('X ');
         } else if (board.size[i][j] === 'O') {
-          output += chalk.bgBlue(' ') + chalk.bgBlue.black('O ');
+          output += chalk.bgCyan(' ') + chalk.bgCyan.black('o ');
         } else {
           output += chalk.bgBlue(' ') + chalk.bgBlue.black('* ');
         }
@@ -370,7 +390,7 @@ function checkBoard(board, value) {
   }
 }
 
-function initialCoordinateCheck(board, value){
+function initialCoordinateCheck(board, value) {
   let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
   let verticalCoordLetter = value.substring(0, 1).toUpperCase();
   let verticalCoordNumber = letters.indexOf(verticalCoordLetter);
@@ -379,7 +399,7 @@ function initialCoordinateCheck(board, value){
     log(error('\n Ship already at this coordinate location, choose again\n'));
     return false;
   }
-  else{
+  else {
     return true;
   }
 }
