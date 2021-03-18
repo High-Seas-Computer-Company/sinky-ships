@@ -15,12 +15,13 @@ function createShips(){
   const fleut = new game.Ship('Dutch Fleut', 4, []);
   const brigantine = new game.Ship('Brigantine', 3, []);
   const sloop = new game.Ship('Sloop', 2, []);
-  const schooner = new game.Ship('Schooner', 1, []);
+  const schooner = new game.Ship('Schooner', 2, []);
   return [galleon, fleut, brigantine, sloop, schooner];
 }
 
 
 const computerGuessesMade = [];
+const shipPlacements = [];
 
 io.on('connection', socket => {
   console.log('New connection created : ' + socket.id);
@@ -69,8 +70,6 @@ sinkyShip.on('connection', (socket) => {
   socket.on('response', (payload) => {
     const guess = validateComputerGuess();
     let hitOrMiss = checkBoard(payload.playerBoard, guess);
-    console.log('HITORMISS', hitOrMiss);
-    console.log('PAYLOAD', payload);
     payload.computerGuess = hitOrMiss.status;
     if (winChecker(payload.playerBoard.size)) {
       payload.winner = 'Computer';
@@ -90,43 +89,31 @@ sinkyShip.on('connection', (socket) => {
 
 function computerShips(board, ship) {
   let directions = ['r', 'd', 'l', 'u'];
-  let horizontalCoord = Math.floor(Math.random() * 10);
-  let verticalCoord = Math.floor(Math.random() * 10);
-  let letterCoord = letters[verticalCoord];
-  let coordinates = letterCoord + `${horizontalCoord}`;
+  let coordinates = validateShipPlacement();
   let placedShip = false;
   while (!placedShip) {
     let random = Math.floor(Math.random() * 4);
     let direction = directions[random];
-    console.log(coordinates);
-    console.log(direction);
     if (!initialCoordinateCheck(board, coordinates)) {
-      horizontalCoord = Math.floor(Math.random() * 10);
-      verticalCoord = Math.floor(Math.random() * 10);
-      letterCoord = letters[verticalCoord];
-      coordinates = letterCoord + `${horizontalCoord}`;
+      coordinates = validateShipPlacement();
       placedShip = false;
-      console.log('WE"VE CONTINUED');
       continue;
     }
     else if (direction.toLowerCase() === 'l' || direction.toLowerCase() === 'r') {
-      placedShip = displayShipHorizontal(coordinates, direction, board.size, ship/*.hitCounter*/);
+      placedShip = displayShipHorizontal(coordinates, direction, board.size, ship);
     }
     else if (direction.toLowerCase() === 'd') {
-      placedShip = displayShipDown(coordinates, direction, board.size, ship/*.hitCounter*/);
+      placedShip = displayShipDown(coordinates, direction, board.size, ship);
     }
     else if (direction.toLowerCase() === 'u') {
-      placedShip = displayShipUp(coordinates, direction, board.size, ship/*.hitCounter*/);
+      placedShip = displayShipUp(coordinates, direction, board.size, ship);
     } else {
-      horizontalCoord = Math.floor(Math.random() * 10);
-      verticalCoord = Math.floor(Math.random() * 10);
-      letterCoord = letters[verticalCoord];
-      coordinates = letterCoord + `${horizontalCoord}`;
+      coordinates = validateShipPlacement();
       placedShip = false;
       continue;
     }
   }
-  console.log(board.size);
+  shipPlacements.push(...ship.coordinates);
   console.log(ship);
 }
 
@@ -147,11 +134,17 @@ function validateComputerGuess() {
   return guess;
 }
 
+function validateShipPlacement() {
+  let guess = generateComputerGuess();
+  while (shipPlacements.includes(guess)) {
+    guess = generateComputerGuess();
+  }
+  return guess;
+}
 
 
-function displayShipHorizontal(start, direction, gameboard, ship/*Length*/) {
+function displayShipHorizontal(start, direction, gameboard, ship) {
   let index;
-  // let i;
   for (let i = 0; i < gameboard.length; i++) {
     let letter = String.fromCharCode(65 + i);
     let array1 = gameboard[i];
@@ -160,8 +153,7 @@ function displayShipHorizontal(start, direction, gameboard, ship/*Length*/) {
     if (direction.toLowerCase() === 'r') {
       let temp = index;
       let checkIndex = index;
-      if (index + ship.hitCounter/*Length*/ > 10) {
-        console.log('Not enough room. Choose a different starting position, or choose to place your ship to the left.');
+      if (index + ship.hitCounter > 10) {
         return false;
       } else {
         while (checkIndex < temp + ship.hitCounter) {
@@ -170,7 +162,7 @@ function displayShipHorizontal(start, direction, gameboard, ship/*Length*/) {
           }
           checkIndex++;
         }
-        while (index < temp + ship.hitCounter/*Length*/) {
+        while (index < temp + ship.hitCounter) {
           ship.coordinates.push(letter + index);
           array1[index] = '$';
           index++;
@@ -181,8 +173,7 @@ function displayShipHorizontal(start, direction, gameboard, ship/*Length*/) {
     else if (direction.toLowerCase() === 'l') {
       let temp = index;
       let checkIndex = index;
-      if (index - ship.hitCounter/*Length*/ < -1) {
-        console.log('Not enough room. Choose a different starting position, or choose to place your ship to the right.');
+      if (index - ship.hitCounter < -1) {
         return false;
       } else {
         while (checkIndex > temp - ship.hitCounter) {
@@ -191,7 +182,7 @@ function displayShipHorizontal(start, direction, gameboard, ship/*Length*/) {
           }
           checkIndex--;
         }
-        while (index > temp - ship.hitCounter/*Length*/) {
+        while (index > temp - ship.hitCounter) {
           ship.coordinates.push(letter + index);
           array1[index] = '$';
           index--;
@@ -202,11 +193,11 @@ function displayShipHorizontal(start, direction, gameboard, ship/*Length*/) {
   }
 }
 
-function displayShipDown(start, direction, gameboard, ship/*Length*/) {
+function displayShipDown(start, direction, gameboard, ship) {
   let index;
   let i;
   let originalRow;
-  let originalLetter = 65; // 65=A=0, 66=B=1, 67=C=2
+  let originalLetter = 65;
   for (i = 0; i < gameboard.length; i++) {
     index = gameboard[i].indexOf(start);
     if (index === -1) { continue; }
@@ -216,8 +207,7 @@ function displayShipDown(start, direction, gameboard, ship/*Length*/) {
     }
   }
 
-  if (direction.toLowerCase() === 'd' && originalRow + ship.hitCounter/*Length*/ > 10) {
-    console.log('\n Not enough room. Choose a different starting position, or choose to place your ship in different direction.');
+  if (direction.toLowerCase() === 'd' && originalRow + ship.hitCounter > 10) {
     return false;
   } else if (direction.toLowerCase() === 'd') {
     for (let k = originalRow; k < (originalRow + ship.hitCounter); k++) {
@@ -225,7 +215,7 @@ function displayShipDown(start, direction, gameboard, ship/*Length*/) {
         return false;
       }
     }
-    for (let j = originalRow; j < (originalRow + ship.hitCounter/*Length*/); j++) {
+    for (let j = originalRow; j < (originalRow + ship.hitCounter); j++) {
       let letter = String.fromCharCode(originalLetter + j);
       ship.coordinates.push(letter + index);
       gameboard[j][index] = '$';
@@ -234,14 +224,12 @@ function displayShipDown(start, direction, gameboard, ship/*Length*/) {
   }
 }
 
-function displayShipUp(start, direction, gameboard, ship/*Length*/) {
+function displayShipUp(start, direction, gameboard, ship) {
   let index;
   let i;
   let originalRow;
-  // let startLetter = 65;
-  let originalLetter = 65; // I=8=9th=73 J=8
+  let originalLetter = 65;
   for (i = 0; i < gameboard.length; i++) {
-    // originalLetter++;
     index = gameboard[i].indexOf(start);
     if (index === -1) {
       continue;
@@ -251,8 +239,7 @@ function displayShipUp(start, direction, gameboard, ship/*Length*/) {
     }
   }
 
-  if (direction.toLowerCase() === 'u' && originalRow - ship.hitCounter/*Length*/ < -1) {
-    console.log('\n Not enough room. Choose a different starting position, or choose to place your ship in different direction.');
+  if (direction.toLowerCase() === 'u' && originalRow - ship.hitCounter < -1) {
     return false;
   } else if (direction.toLowerCase() === 'u') {
     for (let k = originalRow; k > (originalRow - ship.hitCounter); k--) {
@@ -260,7 +247,7 @@ function displayShipUp(start, direction, gameboard, ship/*Length*/) {
         return false;
       }
     }
-    for (let j = originalRow; j > (originalRow - ship.hitCounter/*Length*/); j--) {
+    for (let j = originalRow; j > (originalRow - ship.hitCounter); j--) {
       let letter = String.fromCharCode(originalLetter + j);
       ship.coordinates.push(letter + index);
       gameboard[j][index] = '$';
@@ -285,7 +272,6 @@ function checkBoard(board, value) {
   let verticalCoordLetter = value.substring(0, 1).toUpperCase();
   let verticalCoordNumber = letters.indexOf(verticalCoordLetter);
   let horizontalCoord = Number(value.substring(1, 2));
-  console.log('Hit coordinates', board.size[verticalCoordNumber][horizontalCoord]);
   if (board.size[verticalCoordNumber][horizontalCoord] === 'X' || board.size[verticalCoordNumber][horizontalCoord] === 'O') {
     return false;
   }
@@ -301,7 +287,6 @@ function checkBoard(board, value) {
 
 function initialCoordinateCheck(board, value) {
   if (board.size[value] === '$') {
-    console.log('COORDINATE TAKEN');
     return false;
   }
   else {
