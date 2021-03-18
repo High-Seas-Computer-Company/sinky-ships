@@ -293,8 +293,8 @@ function displayShipDown(start, direction, gameboard, shipLength) {
 
     return prompt();
   } else if (direction.toLowerCase() === 'd') {
-    for (let j = originalRow; j < (originalRow + shipLength); j++) {
-      if (gameboard[j][index] === '$') {
+    for (let k = originalRow; k < (originalRow + shipLength); k++) {
+      if (gameboard[k][index] === '$') {
         return prompt();
       }
     }
@@ -325,8 +325,8 @@ function displayShipUp(start, direction, gameboard, shipLength) {
 
     return prompt();
   } else if (direction.toLowerCase() === 'u') {
-    for (let j = originalRow; j > (originalRow - shipLength); j--) {
-      if (gameboard[j][index] === '$') {
+    for (let k = originalRow; k > (originalRow - shipLength); k--) {
+      if (gameboard[k][index] === '$') {
         return prompt();
       }
     }
