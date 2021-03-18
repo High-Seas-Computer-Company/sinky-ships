@@ -1,0 +1,26 @@
+{
+  "name": "sinky-ships",
+  "version": "1.0.0",
+  "description": "A npm library that allows a user to play a game of battleship against a computer opponent. The game will be interactive through the command line terminal and work with randomly generated battleships.",
+  "main": "hub.js",
+  "scripts": {
+    "test": "jest --verbose --coverage",
+    "start": "node hub.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/High-Seas-Computer-Company/sinky-ships.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/High-Seas-Computer-Company/sinky-ships/issues"
+  },
+  "homepage": "https://github.com/High-Seas-Computer-Company/sinky-ships#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "jest": "^26.6.3",
+    "socket.io": "^4.0.0"
+  }
+}
