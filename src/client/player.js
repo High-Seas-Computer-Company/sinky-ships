@@ -144,12 +144,15 @@ sinkyShipServer.on('guess', (payload) => {
         return prompt();
       }
       let boardCheck = checkBoard(payload.computerBoard, value);
-      log(boardCheck);
+      log(chalk.green(boardCheck.status));
+      console.log(boardCheck.status === 'Hit');
+      console.log(boardCheck.status === 'Miss');
       if (boardCheck.status === 'Hit') {
-        log(chalk.green('HIT! YOUR ON YOUR WAY TO SINKY SHIP'));
+        payload.missileStatus = 'Hit';
         return true;
       } else if (boardCheck.status === 'Miss') {
         log(chalk.yellow('MISS! YOU`LL HAVE TO AIM BETTER'));
+        payload.missileStatus = 'Miss';
         return true;
       } else if (!boardCheck) {
         log('We did not make it into our if statements');
@@ -158,6 +161,12 @@ sinkyShipServer.on('guess', (payload) => {
     },
   })
     .then(answer => {
+      if(payload.missileStatus === 'Hit'){
+        log(chalk.green('HIT! YOUR ON YOUR WAY TO SINKY SHIP'));
+      }
+      if(payload.missileStatus === 'Miss'){
+        log(chalk.yellow('MISS! YOU`LL HAVE TO AIM BETTER'));
+      }
       log(displayBoard(payload.computerBoard));
       sinkyShipServer.emit('response', payload);
     })
@@ -369,6 +378,7 @@ function initialCoordinateCheck(board, value){
   let verticalCoordNumber = letters.indexOf(verticalCoordLetter);
   let horizontalCoord = Number(value.substring(1, 2));
   if (board.size[verticalCoordNumber][horizontalCoord] === '$') {
+    console.log('Ship already at this coordinate location, choose again');
     return false;
   }
   else{
