@@ -5,7 +5,7 @@ const { prompt } = require('enquirer');
 const chalk = require('chalk');
 const log = console.log;
 const error = chalk.bold.red;
-var figlet = require('figlet');
+const figlet = require('figlet');
 
 
 // const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
@@ -23,12 +23,13 @@ figlet('Sinky Ship', function (err, data) {
 });
 
 console.log(
-`   __|__ |___| |\\ \n` +
-`   |o__| |___| | \\ \n` +
-`   |___| |___| |o \\ \n` +
-`  _|___| |___| |__o\\ \n` +
-` /...\\_____|___|____\\_/ \n ` +
-`\\   o * o * * o o  / `);
+  `    <|    \n` +
+  `   __|__ |___| |\\ \n` +
+  `   |o__| |___| | \\ \n` +
+  `   |___| |___| |o \\ \n` +
+  `  _|___| |___| |__o\\ \n` +
+  ` /...\\_____|___|____\\_/ \n ` +
+  `\\   o * o * * o o  / `);
 log(chalk.blue(`~~~~~~~~~~~~~~~~~~~~~~~~~~`));
 
 prompt({
@@ -112,34 +113,35 @@ function shipPlacementSetup(payload, ship) {
     .catch(console.error);
 }
 
+
 sinkyShipServer.on('game-setup1', (payload) => {
   log(chalk.green.inverse('Player Board'));
   log(displayBoard(payload.playerBoard));
-  shipPlacementSetup(payload, payload.Carrier);
+  shipPlacementSetup(payload, payload['Spanish Galleon']);
 });
 
 sinkyShipServer.on('game-setup2', (payload) => {
   log(chalk.green.inverse('Player Board'));
   log(displayBoard(payload.playerBoard));
-  shipPlacementSetup(payload, payload.Destroyer);
+  shipPlacementSetup(payload, payload['Dutch Fleut']);
 });
 
 sinkyShipServer.on('game-setup3', (payload) => {
   log(chalk.green.inverse('Player Board'));
   log(displayBoard(payload.playerBoard));
-  shipPlacementSetup(payload, payload.amphibiousAssaultBoat);
+  shipPlacementSetup(payload, payload['Brigantine']);
 });
 
 sinkyShipServer.on('game-setup4', (payload) => {
   log(chalk.green.inverse('Player Board'));
   log(displayBoard(payload.playerBoard));
-  shipPlacementSetup(payload, payload.patrolBoat);
+  shipPlacementSetup(payload, payload['Sloop']);
 });
 
 sinkyShipServer.on('game-setup5', (payload) => {
   log(chalk.green.inverse('Player Board'));
   log(displayBoard(payload.playerBoard));
-  shipPlacementSetup(payload, payload.pirateRowBoat);
+  shipPlacementSetup(payload, payload['Schooner']);
 });
 
 sinkyShipServer.on('guess', (payload) => {
