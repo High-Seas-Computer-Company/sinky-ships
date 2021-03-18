@@ -8,8 +8,8 @@ const error = chalk.bold.red;
 const figlet = require('figlet');
 
 
-// const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
-const sinkyShipUrl = 'http://localhost:3000/sinky-ship';
+const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
+// const sinkyShipUrl = 'http://localhost:3000/sinky-ship';
 
 const sinkyShipServer = socketio.connect(sinkyShipUrl);
 
@@ -65,7 +65,7 @@ function shipPlacementSetup(payload, ship) {
   prompt({
     type: 'input',
     name: 'shipPlacement',
-    message: `Please select a starting coordinate(A-J + 1-9) for your sinky ship that is ${ship.hitCounter} spaces long Example: A5`,
+    message: `Please select a starting coordinate(A-J + 1-9) for your ${ship.name} that is ${ship.hitCounter} spaces long Example: A5`,
     validate(value) {
       if (!regexPlacementTest(value)) {
         return prompt();
@@ -103,8 +103,8 @@ function shipPlacementSetup(payload, ship) {
         .then(answer => {
           shipSetup.direction = answer.shipDirection;
 
-          log(chalk.green.inverse('Player Board'));
-          log(displayBoard(payload.playerBoard));
+          // log(chalk.green.inverse('Player Board'));
+          // log(displayBoard(payload.playerBoard));
           sinkyShipServer.emit(`setup-complete${shipsPlaced}`, payload);
           shipsPlaced++;
 
@@ -196,14 +196,15 @@ sinkyShipServer.on('guess', (payload) => {
 });
 
 sinkyShipServer.on('game-over', (payload) => {
-  log(chalk.red.bold.inverse('GAMEOVER'));
   log(chalk.yellow.inverse('Computer Board') + '\n', displayBoard(payload.computerBoard));
   log(chalk.green.inverse('Player Board') + '\n', displayBoard(payload.playerBoard));
   if (payload.winner === 'Player 1') {
     log(chalk.bold.green(chalk.inverse('You Win!!!') + ' You sinky shipped and your enemy is defeated!'));
+    printFiglet('green');
   }
   if (payload.winner === 'Computer') {
     log(chalk.bold.yellow(chalk.inverse('You Lose!!!') + ' You have been sinky shipped and your enemy is victorious!'));
+    printFiglet('red');
   }
   prompt({
     type: 'confirm',
@@ -221,7 +222,16 @@ sinkyShipServer.on('game-over', (payload) => {
     .catch(console.error);
 });
 
-
+function printFiglet(color) {
+  figlet('GAME OVER', function (err, data) {
+    if (err) {
+      console.log('Something went wrong...');
+      console.dir(err);
+      return;
+    }
+    log(chalk[color].bold('\n' + data + '\n'));
+  });
+}
 
 
 function displayShipHorizontal(start, direction, gameboard, shipLength) {
