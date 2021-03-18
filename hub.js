@@ -33,7 +33,9 @@ sinkyShip.on('connection', (socket) => {
     payload.playerBoard = new game.Normal();
     payload.computerBoard = new game.Normal();
     payload.computerBoard.player = 'Computer';
-    computerShips(payload.computerBoard);
+    ships.forEach(ship => {
+      computerShips(payload.computerBoard, ship);
+    });
     payload.id = socket.id;
     ships.forEach(ship => {
       payload[ship.name]= ship;
@@ -42,39 +44,28 @@ sinkyShip.on('connection', (socket) => {
   });
 
   socket.on('setup-complete1', (payload) => {
-    console.log(payload.coordinates);
-    // console.log('SETUP-COMPLETE', payload);
     socket.emit('game-setup2', payload);
   });
 
   socket.on('setup-complete2', (payload) => {
-    // console.log('SETUP-COMPLETE', payload);
-    console.log(payload.coordinates);
     socket.emit('game-setup3', payload);
   });
 
   socket.on('setup-complete3', (payload) => {
-    console.log(payload.coordinates);
-    // console.log('SETUP-COMPLETE', payload);
     socket.emit('game-setup4', payload);
   });
 
   socket.on('setup-complete4', (payload) => {
-    console.log(payload.coordinates);
-    // console.log('SETUP-COMPLETE', payload);
     socket.emit('game-setup5', payload);
   });
 
   socket.on('setup-complete5', (payload) => {
-    console.log(payload.coordinates);
-    // console.log('SETUP-COMPLETE', payload);
     socket.emit('guess', payload);
   });
 
   socket.on('response', (payload) => {
     const guess = validateComputerGuess();
     let hitOrMiss = checkBoard(payload.playerBoard, guess);
-    console.log(payload.playerBoard);
     payload.computerGuess = hitOrMiss.status;
     if(winChecker(payload.playerBoard.size)){
       payload.winner = 'Computer';
@@ -84,33 +75,47 @@ sinkyShip.on('connection', (socket) => {
       payload.winner = 'Player 1';
       socket.emit('game-over', payload);
     }else{
-      socket.emit('guess', payload);
+      setTimeout(() => {
+        socket.emit('guess', payload);
+      }, Math.random()*3000 + 1000);
     }
   });
 });
 
 
-function computerShips(board) {
+function computerShips(board, ship) {
   let directions = ['r', 'd', 'l', 'u'];
-  const carrier = new game.Ship('carrier', 5, []);
   let horizontalCoord = Math.floor(Math.random() * 10);
   let verticalCoord = Math.floor(Math.random() * 10);
   let letterCoord = letters[verticalCoord];
   let coordinates = letterCoord + `${horizontalCoord}`;
-  console.log(coordinates);
   let placedShip = false;
   while (!placedShip) {
     let random = Math.floor(Math.random() * 4);
     let direction = directions[random];
+    console.log(coordinates);
     console.log(direction);
-    if (direction.toLowerCase() === 'l' || direction.toLowerCase() === 'r') {
-      placedShip = displayShipHorizontal(coordinates, direction, board.size, carrier.hitCounter);
+    if(!initialCoordinateCheck(board, coordinates)){
+      horizontalCoord = Math.floor(Math.random() * 10);
+      verticalCoord = Math.floor(Math.random() * 10);
+      letterCoord = letters[verticalCoord];
+      coordinates = letterCoord + `${horizontalCoord}`;
+      placedShip = false;
     }
-    if (direction.toLowerCase() === 'd') {
-      placedShip = displayShipDown(coordinates, direction, board.size, carrier.hitCounter);
+    else if (direction.toLowerCase() === 'l' || direction.toLowerCase() === 'r') {
+      placedShip = displayShipHorizontal(coordinates, direction, board.size, ship.hitCounter);
     }
-    if (direction.toLowerCase() === 'u') {
-      placedShip = displayShipUp(coordinates, direction, board.size, carrier.hitCounter);
+    else if (direction.toLowerCase() === 'd') {
+      placedShip = displayShipDown(coordinates, direction, board.size, ship.hitCounter);
+    }
+    else if (direction.toLowerCase() === 'u') {
+      placedShip = displayShipUp(coordinates, direction, board.size, ship.hitCounter);
+    }else{
+      horizontalCoord = Math.floor(Math.random() * 10);
+      verticalCoord = Math.floor(Math.random() * 10);
+      letterCoord = letters[verticalCoord];
+      coordinates = letterCoord + `${horizontalCoord}`;
+      placedShip = false;
     }
   }
   console.log(board.size);
@@ -250,7 +255,14 @@ function checkBoard(board, value) {
 }
 
 
-
+function initialCoordinateCheck(board, value){
+  if (board.size[value] === '$') {
+    return false;
+  }
+  else{
+    return true;
+  }
+}
 
 
 
