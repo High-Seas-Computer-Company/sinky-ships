@@ -29,6 +29,15 @@ prompt({
 
 const regexPlacement = /^[a-j-A-J]\d$/;
 const regexDirection = /^(r|d|l|u|R|D|L|U)$/;
+function regexPlacementTest(value){
+  if(!regexPlacement.test(value)){
+    log(error('\n Please enter a valid coordinate(A-J + 1-9) such as A5 \n'));
+    // console.log('Please enter a valid coordinate(A-J + 1-9) such as A5');
+    return false;
+  }else{
+    return true;
+  }
+}
 let shipsPlaced = 1;
 function shipPlacementSetup(payload,ship){
 
@@ -38,8 +47,7 @@ function shipPlacementSetup(payload,ship){
     name: 'shipPlacement',
     message: `Please select a starting coordinate(A-J + 1-9) for your sinky ship that is ${ship.hitCounter} spaces long Example: A5`,
     validate(value) {
-      if (!regexPlacement.test(value)) {
-        log(error('Please enter a valid coordinate(A-J + 1-9) such as A5'));
+      if (!regexPlacementTest(value)) {
         return prompt();
       }
       if(!initialCoordinateCheck(payload.playerBoard, value)){
@@ -57,7 +65,7 @@ function shipPlacementSetup(payload,ship){
         message: 'Please indicate a direction for your sinky ship (Right, Down, Left, Up) by entering a R, D, L, or U',
         validate(value) {
           if (!value.match(regexDirection)) {
-            log(error('Please enter a valid ship direction of R, D, L, U'));
+            log(error('\n Please enter a valid ship direction of R, D, L, U \n'));
             return prompt();
           }
 
@@ -136,7 +144,7 @@ sinkyShipServer.on('guess', (payload) => {
     message: 'Please select an attack coordinate(A-J + 1-9) for your torpedo that has not already been hit Example: H2',
     validate(value) {
       if (!value.match(regexPlacement)) {
-        log(error('Please enter a valid coordinate(A-J + 1-9) such as A5'));
+        log(error('\n Please enter a valid coordinate(A-J + 1-9) such as A5 \n'));
         return prompt();
       }
       let boardCheck = checkBoard(payload.computerBoard, value);
@@ -144,11 +152,9 @@ sinkyShipServer.on('guess', (payload) => {
         payload.missileStatus = 'Hit';
         return true;
       } else if (boardCheck.status === 'Miss') {
-        log(chalk.yellow('MISS! YOU`LL HAVE TO AIM BETTER THAN THAT!'));
         payload.missileStatus = 'Miss';
         return true;
       } else if (!boardCheck) {
-        log('We did not make it into our if statements');
         return prompt();
       }
     },
@@ -207,7 +213,7 @@ function displayShipHorizontal( start, direction, gameboard, shipLength) {
 
       let checkIndex = index;
       if (index + shipLength > 10) {
-        log(error('Not enough room. Choose a different starting position, or choose to place your ship to the left.'));
+        log(error('\n Not enough room. Choose a different starting position, or direction. \n'));
 
       } else {
         while (checkIndex < temp + shipLength) {
@@ -228,7 +234,7 @@ function displayShipHorizontal( start, direction, gameboard, shipLength) {
 
       let checkIndex = index;
       if (index - shipLength < -1) {
-        log(error('Not enough room. Choose a different starting position, or choose to place your ship to the right.'));
+        log(error('\n Not enough room. Choose a different starting position, or direction.\n'));
 
       } else {
         while (checkIndex > temp - shipLength) {
@@ -261,7 +267,7 @@ function displayShipDown( start, direction, gameboard, shipLength) {
   }
 
   if (direction.toLowerCase() === 'd' && originalRow + shipLength > 10) {
-    log(error('\n Not enough room. Choose a different starting position, or choose to place your ship in different direction.'));
+    log(error('\n Not enough room. Choose a different starting position, or direction.\n'));
 
     return prompt();
   } else if (direction.toLowerCase() === 'd') {
@@ -293,7 +299,7 @@ function displayShipUp( start, direction, gameboard, shipLength) {
 
 
   if (direction.toLowerCase() === 'u' && originalRow - shipLength < -1) {
-    log(error('\n Not enough room. Choose a different starting position, or choose to place your ship in different direction.'));
+    log(error('\n Not enough room. Choose a different starting position, or direction.\n'));
 
     return prompt();
   } else if (direction.toLowerCase() === 'u') {
@@ -352,6 +358,7 @@ function checkBoard(board, value) {
   let horizontalCoord = Number(value.substring(1, 2));
   log('Hit coordinates', board.size[verticalCoordNumber][horizontalCoord]);
   if (board.size[verticalCoordNumber][horizontalCoord] === 'X' || board.size[verticalCoordNumber][horizontalCoord] === 'O') {
+    log(error('\n That coordinate has already been chosen! \n'));
     return false;
   }
   else if (board.size[verticalCoordNumber][horizontalCoord] === '$') {
@@ -369,7 +376,7 @@ function initialCoordinateCheck(board, value){
   let verticalCoordNumber = letters.indexOf(verticalCoordLetter);
   let horizontalCoord = Number(value.substring(1, 2));
   if (board.size[verticalCoordNumber][horizontalCoord] === '$') {
-    log(error('Ship already at this coordinate location, choose again'));
+    log(error('\n Ship already at this coordinate location, choose again\n'));
     return false;
   }
   else{

@@ -42,39 +42,28 @@ sinkyShip.on('connection', (socket) => {
   });
 
   socket.on('setup-complete1', (payload) => {
-    console.log(payload.coordinates);
-    // console.log('SETUP-COMPLETE', payload);
     socket.emit('game-setup2', payload);
   });
 
   socket.on('setup-complete2', (payload) => {
-    // console.log('SETUP-COMPLETE', payload);
-    console.log(payload.coordinates);
     socket.emit('game-setup3', payload);
   });
 
   socket.on('setup-complete3', (payload) => {
-    console.log(payload.coordinates);
-    // console.log('SETUP-COMPLETE', payload);
     socket.emit('game-setup4', payload);
   });
 
   socket.on('setup-complete4', (payload) => {
-    console.log(payload.coordinates);
-    // console.log('SETUP-COMPLETE', payload);
     socket.emit('game-setup5', payload);
   });
 
   socket.on('setup-complete5', (payload) => {
-    console.log(payload.coordinates);
-    // console.log('SETUP-COMPLETE', payload);
     socket.emit('guess', payload);
   });
 
   socket.on('response', (payload) => {
     const guess = validateComputerGuess();
     let hitOrMiss = checkBoard(payload.playerBoard, guess);
-    console.log(payload.playerBoard);
     payload.computerGuess = hitOrMiss.status;
     if(winChecker(payload.playerBoard.size)){
       payload.winner = 'Computer';
@@ -97,7 +86,6 @@ function computerShips(board) {
   let verticalCoord = Math.floor(Math.random() * 10);
   let letterCoord = letters[verticalCoord];
   let coordinates = letterCoord + `${horizontalCoord}`;
-  console.log(coordinates);
   let placedShip = false;
   while (!placedShip) {
     let random = Math.floor(Math.random() * 4);
