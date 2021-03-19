@@ -39,47 +39,49 @@ describe('You should be able to create a new board and display it', () => {
     });
   });
 
-  it('should display a ship vertically up', () => {
-    help.displayShipUp('J9', 'u', board.size, 5);
-    expect(board.size[5][9]).toEqual('$');
-    expect(board.size[6][9]).toEqual('$');
-    expect(board.size[7][9]).toEqual('$');
-    expect(board.size[8][9]).toEqual('$');
-    expect(board.size[9][9]).toEqual('$');
-  });
-});
+  describe('testing functionality of the displayShipUp function', () => {
 
-describe('testing functionality of the checkBoard function', () => {
-  it('should return falsy an already chosen shot', () => {
-    board.size[0][9] = 'X';
-    const test = help.checkBoard(board, 'A9');
-    expect(test).toBeFalsy();
+    it('should display a ship vertically up', () => {
+      help.displayShipUp('J9', 'u', board.size, 5);
+      expect(board.size[5][9]).toEqual('$');
+      expect(board.size[6][9]).toEqual('$');
+      expect(board.size[7][9]).toEqual('$');
+      expect(board.size[8][9]).toEqual('$');
+      expect(board.size[9][9]).toEqual('$');
+    });
   });
 
-  it('should set the status to `Hit` on a hit shot', () => {
-    board.size[0][8] = '$';
-    const test = help.checkBoard(board, 'A8');
-    expect(test.status).toEqual('Hit');
+  describe('testing functionality of the checkBoard function', () => {
+    it('should return falsy an already chosen shot', () => {
+      board.size[0][9] = 'X';
+      const test = help.checkBoard(board, 'A9');
+      expect(test).toBeFalsy();
+    });
+
+    it('should set the status to `Hit` on a hit shot', () => {
+      board.size[0][8] = '$';
+      const test = help.checkBoard(board, 'A8');
+      expect(test.status).toEqual('Hit');
+    });
+
+    it('should set the status to `Miss` on a hit shot', () => {
+      board.size[0][7] = 'A7';
+      const test = help.checkBoard(board, 'A7');
+      expect(test.status).toEqual('Miss');
+    });
   });
 
-  it('should set the status to `Miss` on a hit shot', () => {
-    board.size[0][7] = 'A7';
-    const test = help.checkBoard(board, 'A7');
-    expect(test.status).toEqual('Miss');
-  });
-});
+  describe('Testing initial coordinate check function', () => {
+    it('Should check that a coordinate is already taken and return false', () => {
+      let board = new gameBoard.Normal();
+      board.size[0][5] = '$';
+      expect(help.initialCoordinateCheck(board, 'A5')).toBeFalsy;
+    });
 
-describe('Testing initial coordinate check function', () => {
-  it('Should check that a coordinate is already taken and return false', () => {
-    let board = new gameBoard.Normal();
-    board.size[0][5] = '$';
-    expect(help.initialCoordinateCheck(board, 'A5')).toBeFalsy;
+    it('Should check that a coordinate is not already taken and return true', () => {
+      let board = new gameBoard.Normal();
+      board.size[0][4] = '$';
+      expect(help.initialCoordinateCheck(board, 'A5')).toBeFalsy;
+    });
   });
-
-  it('Should check that a coordinate is not already taken and return true', () => {
-    let board = new gameBoard.Normal();
-    board.size[0][4] = '$';
-    expect(help.initialCoordinateCheck(board, 'A5')).toBeFalsy;
-  });
-});
 });
