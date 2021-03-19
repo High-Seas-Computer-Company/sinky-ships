@@ -67,7 +67,6 @@ describe('All the functionality of the game board and ship placement', () => {
 
   it('should display a ship vertically down', () => {
     help.displayShipDown('B1', 'd', board.size, 5);
-    console.log('wtf?: ', board);
     expect(board.size[1][1]).toEqual('$');
     expect(board.size[2][1]).toEqual('$');
     expect(board.size[3][1]).toEqual('$');
@@ -76,9 +75,14 @@ describe('All the functionality of the game board and ship placement', () => {
   });
 
   it('should display a ship vertically up', () => {
-    const shipUp = help.displayShipUp('A1', 'u', board, 5);
-    //console.log(shipUp);
-    //expect(shipUp).toBeTruthy();
+    help.displayShipUp('J9', 'u', board.size, 5);
+    console.log('wtf?: ', board);
+
+    expect(board.size[5][9]).toEqual('$');
+    expect(board.size[6][9]).toEqual('$');
+    expect(board.size[7][9]).toEqual('$');
+    expect(board.size[8][9]).toEqual('$');
+    expect(board.size[9][9]).toEqual('$');
   });
 
   it('should return a string', () => {
