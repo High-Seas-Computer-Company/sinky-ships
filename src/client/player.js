@@ -161,7 +161,7 @@ sinkyShipServer.on('guess', (payload) => {
   prompt({
     type: 'input',
     name: 'attack',
-    message: 'Please select an attack coordinate(A-J + 1-9) for your torpedo that has not already been hit Example: H2',
+    message: 'Please select an attack coordinate(A-J + 1-9) that has not already been hit for your cannon ball shot Example: H2',
     validate(value) {
       if (!value.match(regexPlacement)) {
         log(error('\n Please enter a valid coordinate(A-J + 1-9) such as A5 \n'));

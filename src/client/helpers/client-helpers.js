@@ -4,6 +4,8 @@ const chalk = require('chalk');
 const log = console.log;
 const error = chalk.bold.red;
 const figlet = require('figlet');
+const { prompt } = require('enquirer');
+
 
 
 function printFiglet(color) {
@@ -171,7 +173,6 @@ function checkBoard(board, value) {
   let verticalCoordLetter = value.substring(0, 1).toUpperCase();
   let verticalCoordNumber = letters.indexOf(verticalCoordLetter);
   let horizontalCoord = Number(value.substring(1, 2));
-  log('Hit coordinates', board.size[verticalCoordNumber][horizontalCoord]);
   if (board.size[verticalCoordNumber][horizontalCoord] === 'X' || board.size[verticalCoordNumber][horizontalCoord] === 'O') {
     log(error('\n That coordinate has already been chosen! \n'));
     return false;
