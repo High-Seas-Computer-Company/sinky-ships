@@ -42,6 +42,8 @@ class Normal extends GameBoard {
   }
 }
 
+
+
 module.exports = {
   GameObject,
   Ship,

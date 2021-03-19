@@ -4,7 +4,6 @@ const gameMaster = require('../src/server/game.js');
 const playerHelper = require('../src/client/helpers/client-helpers.js');
 
 const Ship = gameMaster.Ship;
-const GameBoard = gameMaster.GameBoard;
 const Normal = gameMaster.Normal;
 const GameObject = gameMaster.GameObject;
 
