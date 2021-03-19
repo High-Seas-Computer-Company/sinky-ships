@@ -70,7 +70,6 @@ function shipPlacementSetup(payload, ship) {
         return prompt();
       }
       if (!help.initialCoordinateCheck(payload.playerBoard, value)) {
-        log(error('Ship already at this coordinate location, choose again'));
         return prompt();
       }
       return true;
