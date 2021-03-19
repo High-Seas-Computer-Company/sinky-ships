@@ -21,6 +21,7 @@
   "dependencies": {
     "chalk": "^4.1.0",
     "dotenv": "^8.2.0",
+    "enquirer": "^2.3.6",
     "figlet": "^1.5.0",
     "jest": "^26.6.3",
     "socket.io": "^4.0.0"

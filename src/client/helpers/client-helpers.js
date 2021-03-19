@@ -35,6 +35,7 @@ function displayShipHorizontal(start, direction, gameboard, shipLength) {
       } else {
         while (checkIndex < temp + shipLength) {
           if (array1[checkIndex] === '$') {
+            log(error('\n Not enough room. Choose a different starting position, or direction. \n'));
             return prompt();
           }
           checkIndex++;
@@ -56,6 +57,7 @@ function displayShipHorizontal(start, direction, gameboard, shipLength) {
       } else {
         while (checkIndex > temp - shipLength) {
           if (array1[checkIndex] === '$') {
+            log(error('\n Not enough room. Choose a different starting position, or direction. \n'));
             return prompt();
           }
           checkIndex--;
@@ -122,6 +124,7 @@ function displayShipUp(start, direction, gameboard, shipLength) {
   } else if (direction.toLowerCase() === 'u') {
     for (let k = originalRow; k > (originalRow - shipLength); k--) {
       if (gameboard[k][index] === '$') {
+        log(error('\n Not enough room. Choose a different starting position, or direction. \n'));
         return prompt();
       }
     }
