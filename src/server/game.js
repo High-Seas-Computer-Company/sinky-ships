@@ -21,29 +21,6 @@ class GameBoard {
     this.size = size;
     this.player = player;
   }
-
-  displayBoard() {
-    let horizontalGuide = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    let verticalGuide = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-    let output = '\n' + '   ';
-    for (let i = 0; i < horizontalGuide.length; i++) {
-      output += horizontalGuide[i] + '  ';
-    }
-    output += '\n';
-    for (let i = 0; i < this.size.length; i++) {
-      output += ' ' + verticalGuide[i] + ' ';
-      for (let j = 0; j < this.size[i].length; j++) {
-        // output += ' ' + board.size[i][j]; 
-        output += ' ' + '* ';
-      }
-      output += '\n';
-    }
-    return output;
-  }
-
-  displayShot(coord) {
-
-  }
 }
 
 class Normal extends GameBoard {

@@ -8,14 +8,6 @@ const game = require('./src/server/game.js');
 const hub = require('./src/server/helpers/server-helpers.js');
 const sinkyShip = io.of('/sinky-ship');
 
-function createShips(){
-  const galleon = new game.Ship('Spanish Galleon', 5, []);
-  const fleut = new game.Ship('Dutch Fleut', 4, []);
-  const brigantine = new game.Ship('Brigantine', 3, []);
-  const sloop = new game.Ship('Sloop', 2, []);
-  const schooner = new game.Ship('Schooner', 2, []);
-  return [galleon, fleut, brigantine, sloop, schooner];
-}
 
 io.on('connection', socket => {
   console.log('New connection created : ' + socket.id);
@@ -26,7 +18,7 @@ sinkyShip.on('connection', (socket) => {
   
 
   socket.on('new-game', () => {
-    const ships = createShips();
+    const ships = hub.createShips();
     let payload = new game.GameObject();
     payload.playerBoard = new game.Normal();
     payload.computerBoard = new game.Normal();

@@ -1,6 +1,7 @@
 'use strict';
 
 const gameMaster = require('../src/server/game.js');
+const playerHelper = require('../src/client/helpers/client-helpers.js');
 
 const Ship = gameMaster.Ship;
 const GameBoard = gameMaster.GameBoard;
@@ -37,6 +38,9 @@ describe('creating a new gameobject', () => {
     const gameObject = new GameObject('socketId', 'ships', 'gameboard');
 
     expect(gameObject).toBeTruthy();
+    expect(gameObject.id).toEqual('socketId');
+    expect(gameObject.ships).toEqual('ships');
+    expect(gameObject.gameboard).toEqual('gameboard');
   });
 
   it ('should instantiate a new socketid in the game object', () => {
@@ -69,7 +73,7 @@ describe('creating a new gameobject', () => {
 describe('testing display board function', () => {
   it ('should output a console ready gameboard', () => {
     const board = new Normal(10);
-    const displayBoard = board.displayBoard();
+    const displayBoard = playerHelper.displayBoard(board);
 
 
     expect(displayBoard.includes('\n')).toBeTruthy();
