@@ -1,5 +1,6 @@
 'use strict';
 
+const game = require('../game.js');
 const computerGuessesMade = [];
 const shipPlacements = [];
 let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
@@ -211,6 +212,15 @@ function initialCoordinateCheck(board, value) {
   }
 }
 
+function createShips(){
+  const galleon = new game.Ship('Spanish Galleon', 5, []);
+  const fleut = new game.Ship('Dutch Fleut', 4, []);
+  const brigantine = new game.Ship('Brigantine', 3, []);
+  const sloop = new game.Ship('Sloop', 2, []);
+  const schooner = new game.Ship('Schooner', 2, []);
+  return [galleon, fleut, brigantine, sloop, schooner];
+}
+
 module.exports = {
   computerShips,
   generateComputerGuess,
@@ -222,5 +232,6 @@ module.exports = {
   winChecker,
   checkBoard,
   initialCoordinateCheck,
+  createShips,
 };
 

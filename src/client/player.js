@@ -10,7 +10,6 @@ const help = require('./helpers/client-helpers.js');
 
 
 const sinkyShipUrl = 'https://sinky-ship.herokuapp.com/sinky-ship';
-// const sinkyShipUrl = 'http://localhost:3000/sinky-ship';
 
 const sinkyShipServer = socketio.connect(sinkyShipUrl);
 
@@ -53,7 +52,6 @@ const regexDirection = /^(r|d|l|u|R|D|L|U)$/;
 function regexPlacementTest(value) {
   if (!regexPlacement.test(value)) {
     log(error('\n Please enter a valid coordinate(A-J + 1-9) such as A5 \n'));
-    // console.log('Please enter a valid coordinate(A-J + 1-9) such as A5');
     return false;
   } else {
     return true;
